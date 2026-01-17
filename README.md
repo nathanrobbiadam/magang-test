@@ -1,131 +1,41 @@
-[![github-follow](https://img.shields.io/github/followers/Prajwal100?label=Follow&logoColor=purple&style=social)](https://github.com/Prajwal100)
-[![GitHub stars](https://img.shields.io/github/stars/Prajwal100/Complete-Ecommerce-in-laravel-10.svg?style=social)](https://github.com/Prajwal100/Complete-Ecommerce-in-laravel-10/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Prajwal100/Complete-Ecommerce-in-laravel-10.svg)](https://github.com/Prajwal100/Complete-Ecommerce-in-laravel-10/network)
-[![license](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://choosealicense.com/licenses/mit/)
-[![Buy Me A Coffee](https://img.shields.io/badge/Support-Buy%20Me%20A%20Coffee-yellow?style=flat-square&logo=buy-me-a-coffee)](https://buymeacoffee.com/prajwalrai/support-my-work-complete-laravel-e-commerce-project)
+Implementation notes. 
 
-# 🚀 Complete E-commerce Website in Laravel 10
-A full-fledged **eCommerce solution** built on **Laravel 10**, featuring a modern UI, powerful admin panel, seamless payment integration, and a user-friendly shopping experience.
 
----
+Task 1: Order product list integration I added a new section in the order detail view to show the list of products that the user bought. I modified the file resources/views/user/order/show.blade.php by adding a table that displays the product title, quantity, price per item, and the total amount. I also added a check using the null coalescing operator to make sure the page doesn't error if some data is missing.
 
-## 🎥 Live Demo & Tutorials
-🔹 **Setup Video:** [Watch Here](https://www.youtube.com/watch?v=URX5D1A5XQ4&t=19s)
-🔹 **Demo Video:** [Live Demo](https://youtu.be/RxyrQQ3oTIE?si=Iq25IuJ8_eB5OJpC)
-🔹 **Complete Tutorial Series:** [Watch Now](https://www.youtube.com/watch?v=FdAMucaks64&list=PLIFG3IUe1Zxo8Zvju3_kJJvoKSaIP_SC_&index=1&t=44s)
+Task 2: Data integrity and persistence I made sure that the order details do not change even if the admin edits or deletes a product later.
 
----
+Fixed price logic I changed the code to take the price from the carts table instead of the products table. This is important because the price in the product catalog can change, but the price in the user's order must stay the same as when they first bought it.
 
-## 🌟 Features
+Soft deletes implementation I added the SoftDeletes trait to the Product model and created a migration to add the deleted_at column to the products table. In the Cart model, I updated the product relationship by adding the withTrashed method. This way, if an admin deletes a product, the name and info will still appear in the user's order history instead of showing an error.
 
-### 🔹 **Frontend**
-- ⚡ **Progressive Web App (PWA) support**
-- 🎨 **Modern & responsive design**
-- 🛒 **Shopping cart, wishlist, and order tracking**
-- 🔎 **SEO-friendly URLs & metadata**
-- 💳 **Integrated PayPal payment gateway**
-- 📢 **Social login (Google, Facebook, Github)**
-- 💬 **Multi-level comments & reviews**
+Suggestion
+1. Apply soft deletes to categories and brands Currently, only the products table uses soft deletes. I suggest using this for categories and brands too. This is important because if an admin deletes a category that is still connected to a product, it might cause a blank page or error in the order detail view.
 
-### 🔹 **Admin Dashboard**
-- 🎛️ **Role management**
-- 📊 **Advanced analytics & reporting**
-- 🛍️ **Product & order management**
-- 🔔 **Real-time notifications & messaging**
-- 🏷️ **Coupon & discount system**
-- 📰 **Blog & category management**
-- 📸 **Media & banner manager**
+2. Improve database relationships Adding more foreign keys in the migration files would make the database more secure. It ensures that data between orders, carts, and products are always connected properly and prevents data from being lost accidentally.
 
-### 🔹 **User Dashboard**
-- 📦 **Order history & tracking**
-- 💬 **Review & comment system**
-- 🔧 **Profile customization**
+3. Create a separate table for order history Right now, the system uses the cart table to show product details in the order. It would be better to have a special table like order_items to save the product name and price permanently at the time of purchase. This makes the order history even more safe if there are changes to the product catalog.
 
----
+4. Notification for deleted products When a product is deleted by the admin, the system should notify users who have that item in their wishlist. Adding a simple status like Discontinued would be a good improvement so the user knows why the product is no longer available.
 
-## 🛠️ Installation Guide
+Proof : 
 
-### 🔹 **Step 1: Clone the Repository**
-```sh
-git clone https://github.com/Prajwal100/Complete-Ecommerce-in-laravel-10.git
-cd Complete-Ecommerce-in-laravel-10
-```
+#Price Integrity (Edit Test)
 
-### 🔹 **Step 2: Install Dependencies**
-```sh
-composer install
-npm install
-```
+Before Edit: ![Order Detail Initial](screenshots/Price_before.png)
 
-### 🔹 **Step 3: Environment Setup**
-```sh
-cp .env.example .env
-php artisan key:generate
-```
-Update `.env` with database credentials.
+Admin Action: 
+![Admin Edit Price](screenshots/admin_action.png)
+![Admin Edit Price](screenshots/Price_new.png)
 
-### 🔹 **Step 4: Database Configuration**
-```sh
-php artisan migrate --seed
-```
-Import `database/e-shop.sql` into your database manually (if needed).
+After Edit: ![Order Detail Persists](screenshots/Result.png)
 
-### 🔹 **Step 5: Setup Storage**
-```sh
-php artisan storage:link
-```
+#Data Persistence (Delete Test)
 
-### 🔹 **Step 6: Run the Application**
-```sh
-php artisan serve
-```
-🔗 Open `http://localhost:8000`
+User View: ![before delete](screenshots/Before_delete.png)
 
-### **Admin Login Credentials:**
-📧 **Email:** `admin@gmail.com`  
-🔑 **Password:** `1111`
+Admin Action: 
+![Admin Delete Product](screenshots/Before_delete_no3.png) 
+![Admin Delete Product](screenshots/After_delete_no3.png)
 
----
-
-## 🎙️ Transform Text into Speech with NepVox! 🔊
-🚀 **[NepVox](https://nepvox.com/)** is an advanced **AI-powered text-to-speech** platform that helps you convert any text into natural human-like voice effortlessly.
-
-✅ **Supports multiple languages & voices**
-✅ **Perfect for videos, accessibility & podcasts**
-✅ **Simple API integration for businesses**
-
-🎧 **Experience it now:** [NepVox AI TTS](https://nepvox.com/)
-
----
-
-## 📷 Screenshots
-
-### **Admin Panel**
-![Admin](https://user-images.githubusercontent.com/29488275/90719413-13b82200-e2d4-11ea-8ca0-f0e5551c4c9d.png)
-
-### **Product Management**
-![Products](https://user-images.githubusercontent.com/29488275/90719534-61348f00-e2d4-11ea-8a81-409daee0ad94.png)
-
-### **User Dashboard**
-![User Dashboard](https://user-images.githubusercontent.com/29488275/90719563-7a3d4000-e2d4-11ea-9e6a-56caac13b146.png)
-
----
-
-## 📩 Contact Me
-💼 Need a **Full Stack Laravel Developer**? Let's work together!
-
-📧 **Email:** Prajwal.iar@gmail.com  
-📲 **WhatsApp:** +977-9818441226  
-
-🔗 **[Hire Me on Upwork](https://www.upwork.com/freelancers/~01210bb2575a8c05a9)**
-
-### ☕ Support My Work
-If you find this project helpful, consider [buying me a coffee](https://buymeacoffee.com/prajwalrai/support-my-work-complete-laravel-e-commerce-project). Your support helps maintain and improve this project! 🚀
-
----
-
-## 📜 License
-🔹 This project is **MIT Licensed** – Feel free to use & modify!
-
-⭐ **If you find this project helpful, don't forget to star it!** ⭐
-
+User View: ![Product still visible](screenshots/After_delete.png)
