@@ -159,7 +159,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order=Order::find($id);
+        $order=Order::with('cart_info.product')->findOrFail($id);
         // return $order;
         return view('backend.order.show')->with('order',$order);
     }

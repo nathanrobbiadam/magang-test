@@ -4,7 +4,8 @@
 
 @section('main-content')
 <div class="card">
-<h5 class="card-header">Order       <a href="{{route('order.pdf',$order->id)}}" class=" btn btn-sm btn-primary shadow-sm float-right"><i class="fas fa-download fa-sm text-white-50"></i> Generate PDF</a>
+<h5 class="card-header">Order       
+  <a href="{{route('order.pdf',$order->id)}}" class=" btn btn-sm btn-primary shadow-sm float-right"><i class="fas fa-download fa-sm text-white-50"></i> Generate PDF</a>
   </h5>
   <div class="card-body">
     @if($order)
@@ -29,7 +30,8 @@
             <td>{{$order->first_name}} {{$order->last_name}}</td>
             <td>{{$order->email}}</td>
             <td>{{$order->quantity}}</td>
-            <td>${{$order->shipping->price}}</td>
+            {{-- PERBAIKAN 1: Tambahkan '?? 0' agar tidak crash jika shipping kosong --}}
+            <td>${{ $order->shipping->price ?? 0 }}</td>
             <td>${{number_format($order->total_amount,2)}}</td>
             <td>
                 @if($order->status=='new')
@@ -78,15 +80,13 @@
                         <td> : {{$order->status}}</td>
                     </tr>
                     <tr>
-                      @php
-                          $shipping_charge=DB::table('shippings')->where('id',$order->shipping_id)->pluck('price');
-                      @endphp
+                        {{-- PERBAIKAN 2: Gunakan null coalescing operator (??) --}}
                         <td>Shipping Charge</td>
-                        <td> :${{$order->shipping->price}}</td>
+                        <td> : ${{ $order->shipping->price ?? 0 }}</td>
                     </tr>
                     <tr>
                         <td>Total Amount</td>
-                        <td> : $ {{number_format($order->total_amount,2)}}</td>
+                        <td> : ${{number_format($order->total_amount,2)}}</td>
                     </tr>
                     <tr>
                       <td>Payment Method</td>
@@ -120,6 +120,7 @@
                         <td>Address</td>
                         <td> : {{$order->address1}}, {{$order->address2}}</td>
                     </tr>
+                    
                     <tr>
                         <td>Country</td>
                         <td> : {{$order->country}}</td>
@@ -128,6 +129,35 @@
                         <td>Post Code</td>
                         <td> : {{$order->post_code}}</td>
                     </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-lg-12">
+            <div class="order-info">
+              <h4 class="text-center pb-4">PRODUCT DETAILS</h4>
+              <table class="table table-bordered">
+                <thead>
+                  <tr class="bg-white">
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($order->cart_info as $cart)
+                  <tr>
+                    {{-- PERBAIKAN 3: Fallback title jika Soft Deletes bermasalah --}}
+                    <td>{{ $cart->product->title ?? 'Product Deleted' }}</td>
+                    <td>x{{ $cart->quantity }}</td>
+                    <td>${{ number_format($cart->price, 2) }}</td>
+                    <td>${{ number_format($cart->amount, 2) }}</td>
+                  </tr>
+                  @endforeach
+                </tbody>
               </table>
             </div>
           </div>
@@ -149,6 +179,5 @@
     .order-info h4,.shipping-info h4{
         text-decoration: underline;
     }
-
 </style>
 @endpush
