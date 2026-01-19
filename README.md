@@ -32,10 +32,10 @@ After Edit: ![Order Detail Persists](screenshots/Result.png)
 
 #Data Persistence (Delete Test)
 
-User View: ![before delete](screenshots/Before_delete.png)
+before delete: ![before delete](screenshots/Before_delete.png)
 
 Admin Action: 
 ![Admin Delete Product](screenshots/Before_delete_no3.png) 
 ![Admin Delete Product](screenshots/After_delete_no3.png)
 
-User View: ![Product still visible](screenshots/After_delete.png)
+After delete: ![Product still visible](screenshots/After_delete.png)
