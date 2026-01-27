@@ -1,3 +1,6 @@
+# AI Implementation : https://gemini.google.com/share/8490a71a9c21
+
+
 Implementation notes. 
 
 
